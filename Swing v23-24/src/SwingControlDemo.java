@@ -2,8 +2,10 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -20,7 +22,7 @@ public class SwingControlDemo implements ActionListener {
     private int HEIGHT=700;
     JButton startButton = new JButton("Start");
 
-    private String readOutput;
+    public String readOutput;
 
     public SwingControlDemo() {
         prepareGUI();
@@ -113,14 +115,14 @@ public class SwingControlDemo implements ActionListener {
                 mainFrame.add(controlPanel);
                 mainFrame.add(statusLabel);
 
-                taLink = new JTextArea();
+                taLink = new JTextArea("https://www.milton.edu/");
                 taLink.setBounds(50, 5, WIDTH - 100, HEIGHT - 50);
 
                 JButton readButton = new JButton("Read HTML");
                 readButton.setActionCommand("Read");
                 readButton.addActionListener(new ButtonClickListener());
 
-                taSearch = new JTextArea();
+                taSearch = new JTextArea("r");
                 taSearch.setBounds(50,5,WIDTH-100,HEIGHT-100);
 
                 mainFrame.add(mb);  //add menu bar
@@ -132,25 +134,55 @@ public class SwingControlDemo implements ActionListener {
             }
             else if(command.equals("Read")){
 
-                /*URL url = new URL("https://www.milton.edu/");
+                String searchTerm = taSearch.getText();
+                String linkTerm = taLink.getText();
 
-                URLConnection urlc = url.openConnection();
+                statusLabel.setText(readOutput);
+
+                URL url = null;
+                try {
+                    url = new URL(linkTerm);
+                } catch (MalformedURLException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                URLConnection urlc = null;
+                try {
+                    urlc = url.openConnection();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
                 urlc.setRequestProperty("User-Agent", "Mozilla 5.0 (Windows; U; " + "Windows NT 5.1; en-US; rv:1.8.0.11) ");
 
-                BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(urlc.getInputStream())
-                );
+                BufferedReader reader = null;
+                try {
+                    reader = new BufferedReader(
+                            new InputStreamReader(urlc.getInputStream())
+                    );
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
                 String line;
-                while ( (line = reader.readLine()) != null ) {
-                    if(line.contains("href")){
-//
+                while (true) {
+                    try {
+                        if ((line = reader.readLine()) == null) break;
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    if(line.contains(searchTerm)){
+                        System.out.println("line with search term");
 
                     }
                 }
-                reader.close();
+                try {
+                    reader.close();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                try{
             } catch(Exception ex) {
                 System.out.println(ex);
-                }*/
+                }
             }
         }
     }

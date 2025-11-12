@@ -119,7 +119,7 @@ public class SwingControlDemo implements ActionListener {
                 mainFrame.add(controlPanel);
                 mainFrame.add(taOutput);
 
-                taLink = new JTextArea("https://www.milton.edu/");
+                taLink = new JTextArea("https://www.nytimes.com/");
                 taLink.setBounds(50, 5, WIDTH - 100, HEIGHT - 50);
 
                 JButton readButton = new JButton("Read HTML");
@@ -172,7 +172,41 @@ public class SwingControlDemo implements ActionListener {
                         throw new RuntimeException(ex);
                     }
                     if(line.contains(searchTerm)){
-                        taOutput.setText(line);
+                        //readOutput += line;
+                        //taOutput.setText(readOutput);
+
+                        if(line.contains("src=\"")){
+                            String[] doubleSourceLinks = line.split("src=\"");
+                            for (int i = 0; i < doubleSourceLinks.length; i++) {
+                                    doubleSourceLinks[i] = doubleSourceLinks[i].substring(0,doubleSourceLinks[i].indexOf("\""));
+                                    System.out.println(doubleSourceLinks[i] + " SRC DOUBLE");
+                            }
+                        }
+
+                        if(line.contains("src='")){
+                            String[] singleSourceLinks = line.split("src='");
+                            for (int i = 0; i < singleSourceLinks.length; i++) {
+                                    singleSourceLinks[i] = singleSourceLinks[i].substring(0,singleSourceLinks[i].indexOf("'"));
+                                    System.out.println(singleSourceLinks[i] + " SRC SINGLE");
+                            }
+                        }
+
+                        if(line.contains("href=\"")){
+                            String[] doubleReferenceLinks = line.split("href=\"");
+                            for (int i = 0; i < doubleReferenceLinks.length; i++) {
+                                    doubleReferenceLinks[i] = doubleReferenceLinks[i].substring(0,doubleReferenceLinks[i].indexOf("\""));
+                                    System.out.println(doubleReferenceLinks[i] + " HREF DOUBLE");
+                            }
+                        }
+
+                        if(line.contains("href='")){
+                            String[] singleReferenceLinks = line.split("href='");
+                            for (int i = 0; i < singleReferenceLinks.length; i++) {
+                                    singleReferenceLinks[i] = singleReferenceLinks[i].substring(0,singleReferenceLinks[i].indexOf("'"));
+                                    System.out.println(singleReferenceLinks[i] + " HREF SINGLE");
+                            }
+                        }
+
                         System.out.println(line);
 
                     }

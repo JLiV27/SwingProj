@@ -18,6 +18,7 @@ public class SwingControlDemo implements ActionListener {
     private JMenuItem cut, copy, paste, selectAll;
     private JTextArea taLink; //typing area
     private JTextArea taSearch;
+    private JTextArea taOutput;
     private int WIDTH=800;
     private int HEIGHT=700;
     JButton startButton = new JButton("Start");
@@ -109,11 +110,14 @@ public class SwingControlDemo implements ActionListener {
                 controlPanel = new JPanel();
                 controlPanel.setLayout(new GridLayout(1,3)); //set the layout of the pannel
 
-                statusLabel = new JLabel(readOutput, JLabel.CENTER);
-                statusLabel.setSize(350, 100);
+                //statusLabel = new JLabel("Waiting for input...", JLabel.CENTER);
+                //statusLabel.setSize(350, 100);
+
+                taOutput = new JTextArea("Waiting for input...");
+                taOutput.setBounds(50, 5, WIDTH - 100, HEIGHT - 50);
 
                 mainFrame.add(controlPanel);
-                mainFrame.add(statusLabel);
+                mainFrame.add(taOutput);
 
                 taLink = new JTextArea("https://www.milton.edu/");
                 taLink.setBounds(50, 5, WIDTH - 100, HEIGHT - 50);
@@ -122,7 +126,7 @@ public class SwingControlDemo implements ActionListener {
                 readButton.setActionCommand("Read");
                 readButton.addActionListener(new ButtonClickListener());
 
-                taSearch = new JTextArea("r");
+                taSearch = new JTextArea("");
                 taSearch.setBounds(50,5,WIDTH-100,HEIGHT-100);
 
                 mainFrame.add(mb);  //add menu bar
@@ -136,8 +140,6 @@ public class SwingControlDemo implements ActionListener {
 
                 String searchTerm = taSearch.getText();
                 String linkTerm = taLink.getText();
-
-                statusLabel.setText(readOutput);
 
                 URL url = null;
                 try {
@@ -170,7 +172,8 @@ public class SwingControlDemo implements ActionListener {
                         throw new RuntimeException(ex);
                     }
                     if(line.contains(searchTerm)){
-                        System.out.println("line with search term");
+                        taOutput.setText(line);
+                        System.out.println(line);
 
                     }
                 }

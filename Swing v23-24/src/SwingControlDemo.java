@@ -4,7 +4,6 @@ import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -18,12 +17,17 @@ public class SwingControlDemo implements ActionListener {
     private JTextArea taLink; //typing area
     private JTextArea taSearch;
     private JTextArea taOutput;
-    private int WIDTH=800;
-    private int HEIGHT=700;
+    private final int WIDTH=800;
+    private final int HEIGHT=700;
     JButton startButton = new JButton("Start");
 
     public String readOutput;
     public String[] manyTerms;
+    public String[] singleReferenceLinks;
+    public String[] doubleReferenceLinks;
+    public String[] singleSourceLinks;
+    public String[] doubleSourceLinks;
+    public String finalOutput;
 
     public SwingControlDemo() {
         prepareGUI();
@@ -138,8 +142,6 @@ public class SwingControlDemo implements ActionListener {
             }
             else if(command.equals("Read")) {
 
-                //String searchTerm = taSearch.getText();
-
                 if (taSearch.getText().contains(",")) {
                     manyTerms = taSearch.getText().split(",");
                 }
@@ -176,10 +178,8 @@ public class SwingControlDemo implements ActionListener {
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
-                    for (int x = 0; x < manyTerms.length; x++) {
-                        if (line.contains(manyTerms[x])) {
                             if (line.contains(" src=\"")) {
-                                String[] doubleSourceLinks = line.split("src=\"");
+                                doubleSourceLinks = line.split("src=\"");
                                 for (int i = 1; i < doubleSourceLinks.length; i++) {
                                     doubleSourceLinks[i] = doubleSourceLinks[i].substring(0, doubleSourceLinks[i].indexOf("\""));
                                     readOutput += doubleSourceLinks[i] + "\n";
@@ -187,7 +187,7 @@ public class SwingControlDemo implements ActionListener {
                             }
 
                             if (line.contains(" src='")) {
-                                String[] singleSourceLinks = line.split("src='");
+                                singleSourceLinks = line.split("src='");
                                 for (int i = 1; i < singleSourceLinks.length; i++) {
                                     singleSourceLinks[i] = singleSourceLinks[i].substring(0, singleSourceLinks[i].indexOf("'"));
                                     readOutput += singleSourceLinks[i] + "\n";
@@ -195,7 +195,7 @@ public class SwingControlDemo implements ActionListener {
                             }
 
                             if (line.contains(" href=\"")) {
-                                String[] doubleReferenceLinks = line.split("href=\"");
+                                doubleReferenceLinks = line.split("href=\"");
                                 for (int i = 1; i < doubleReferenceLinks.length; i++) {
                                     doubleReferenceLinks[i] = doubleReferenceLinks[i].substring(0, doubleReferenceLinks[i].indexOf("\""));
                                     readOutput += doubleReferenceLinks[i] + "\n";
@@ -203,15 +203,23 @@ public class SwingControlDemo implements ActionListener {
                             }
 
                             if (line.contains(" href='")) {
-                                String[] singleReferenceLinks = line.split("href='");
+                                singleReferenceLinks = line.split("href='");
                                 for (int i = 1; i < singleReferenceLinks.length; i++) {
                                     singleReferenceLinks[i] = singleReferenceLinks[i].substring(0, singleReferenceLinks[i].indexOf("'"));
                                     readOutput += singleReferenceLinks[i] + "\n";
                                 }
                             }
-                            taOutput.setText(readOutput);
+                    taOutput.setText(readOutput);
+
+                    String[] termCheck = taOutput.getText().split("\n");
+                    for (int i = 0; i < manyTerms.length; i++) {
+                        for (int j = 0; j < termCheck.length; j++) {
+                            if(termCheck[j].contains(manyTerms[i])){
+                                finalOutput += termCheck[j] + "\n";
+                            }
                         }
                     }
+                    taOutput.setText(finalOutput);
                 }
                 try {
                     reader.close();
